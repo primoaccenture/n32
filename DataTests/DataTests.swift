@@ -7,31 +7,56 @@
 
 import XCTest
 @testable import Data
+@testable import Domain
 
 final class RemoteAddAccountTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func test_() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    
+    func test_add_should_call_with_correct_url() throws {
+        let url = URL(string: "localhost")!
+        let (sut, httpClientSpy) = makeSUT(url: url)
         
+        sut.add(accountModel: makeAddAccountModel())
         
+        XCTAssertEqual(httpClientSpy.url, url)
     }
+    
+    func test_add_should_call_with_correct_data() throws {
+        let (sut, httpClientSpy) = makeSUT()
+        let accountModel = makeAddAccountModel()
+        let data = try? JSONEncoder().encode(accountModel)
+        
+        sut.add(accountModel: accountModel)
+        
+        XCTAssertEqual(httpClientSpy.data, data)
+    }
+    
+}
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+extension RemoteAddAccountTests {
+    func makeSUT(url: URL = URL(string: "localhost")!) -> (RemoteAddAccount, HttpClientSpy) {
+        let url = url
+        let httpClientSpy = HttpClientSpy()
+        let sut = RemoteAddAccount(url: url, httpClient: httpClientSpy)
+        
+        return (sut, httpClientSpy)
+    }
+    
+    func makeAddAccountModel() -> AddAccountModel {
+        let account = AddAccountModel(
+            name: "Jose",
+            email: "jose@gmail.com",
+            password: "123456",
+            passwordConfirmation: "123456")
+        return account
+    }
+    
+    class HttpClientSpy: HttpClientPost {
+        var url: URL?
+        var data: Data?
+        
+        func post(to url: URL, with data: Data?) {
+            self.url = url
+            self.data = data
         }
     }
 

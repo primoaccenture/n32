@@ -8,8 +8,21 @@
 import Foundation
 import Domain
 
-class RemoteAddAccount: AddAccount {
-    func add(addAccountModel: Domain.AddAccountModel, completion: @escaping (Result<String, any Error>) -> Void) {
-        
+public final class RemoteAddAccount: AddAccount {
+    private let url: URL
+    private let httpClient: HttpClientPost
+    
+    public init(url: URL, httpClient: HttpClientPost) {
+        self.url = url
+        self.httpClient = httpClient
     }
+    
+    public func add(accountModel: AddAccountModel) {
+        httpClient.post(to: url, with: accountModel.toData())
+    }
+    
+    public func add(accountModel: AddAccountModel, completion: @escaping (Result<String, any Error>) -> Void) {
+        httpClient.post(to: url, with: accountModel.toData())
+    }
+    
 }
