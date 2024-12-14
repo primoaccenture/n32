@@ -15,9 +15,10 @@ final class RemoteAddAccountTests: XCTestCase {
         let url = URL(string: "localhost")!
         let (sut, httpClientSpy) = makeSUT(url: url)
         
-        sut.add(accountModel: makeAddAccountModel())
+        sut.add(accountModel: makeAddAccountModel()) { _ in }
         
         XCTAssertEqual(httpClientSpy.url, url)
+        XCTAssertEqual(httpClientSpy.callsCount, 1)
     }
     
     func test_add_should_call_with_correct_data() throws {
@@ -25,9 +26,26 @@ final class RemoteAddAccountTests: XCTestCase {
         let accountModel = makeAddAccountModel()
         let data = try? JSONEncoder().encode(accountModel)
         
-        sut.add(accountModel: accountModel)
+        sut.add(accountModel: accountModel) { _ in }
         
         XCTAssertEqual(httpClientSpy.data, data)
+    }
+    
+    func test_add_should_complete_with_error() throws {
+        let (sut, httpClientSpy) = makeSUT()
+        let expec = expectation(description: "waiting async call")
+        
+        sut.add(accountModel: makeAddAccountModel()) { error in
+            XCTAssertEqual(error, .unExpected)
+            
+            //complete async
+            expec.fulfill()
+        }
+        
+        //call error
+        httpClientSpy.completeWithError(.noConectivity)
+        
+        wait(for: [expec], timeout: 1)
     }
     
 }
@@ -51,12 +69,20 @@ extension RemoteAddAccountTests {
     }
     
     class HttpClientSpy: HttpClientPost {
-        var url: URL?
-        var data: Data?
+        var url: URL? = nil
+        var data: Data? = nil
+        var callsCount: Int = 0
+        var completion: ((HttpError) -> Void)?
         
-        func post(to url: URL, with data: Data?) {
+        func post(to url: URL, with data: Data?, completion: @escaping (HttpError) -> Void ) {
             self.url = url
             self.data = data
+            self.callsCount += 1
+            self.completion = completion
+        }
+        
+        func completeWithError(_ error: HttpError) {
+            completion?(error)
         }
     }
 
