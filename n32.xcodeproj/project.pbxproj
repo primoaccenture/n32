@@ -14,7 +14,7 @@
 		DD7EAD822D0C8A1B0090CD77 /* Domain.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DD7EAD5F2D0C89CC0090CD77 /* Domain.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DD7EAD872D0C8ADD0090CD77 /* AddAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD7EAD862D0C8ADD0090CD77 /* AddAccount.swift */; };
 		DD7EAD892D0C8BBC0090CD77 /* RemoteAddAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD7EAD882D0C8BBC0090CD77 /* RemoteAddAccount.swift */; };
-		DD7EAD8B2D0C91C00090CD77 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD7EAD8A2D0C91C00090CD77 /* HttpClient.swift */; };
+		DD7EAD8B2D0C91C00090CD77 /* HttpClientPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD7EAD8A2D0C91C00090CD77 /* HttpClientPost.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +56,7 @@
 		DD7EAD772D0C8A0A0090CD77 /* DataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTests.swift; sourceTree = "<group>"; };
 		DD7EAD862D0C8ADD0090CD77 /* AddAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccount.swift; sourceTree = "<group>"; };
 		DD7EAD882D0C8BBC0090CD77 /* RemoteAddAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteAddAccount.swift; sourceTree = "<group>"; };
-		DD7EAD8A2D0C91C00090CD77 /* HttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
+		DD7EAD8A2D0C91C00090CD77 /* HttpClientPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClientPost.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,7 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				DD7EAD882D0C8BBC0090CD77 /* RemoteAddAccount.swift */,
-				DD7EAD8A2D0C91C00090CD77 /* HttpClient.swift */,
+				DD7EAD8A2D0C91C00090CD77 /* HttpClientPost.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -297,7 +297,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD7EAD8B2D0C91C00090CD77 /* HttpClient.swift in Sources */,
+				DD7EAD8B2D0C91C00090CD77 /* HttpClientPost.swift in Sources */,
 				DD7EAD892D0C8BBC0090CD77 /* RemoteAddAccount.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
