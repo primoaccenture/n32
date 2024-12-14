@@ -12,7 +12,7 @@ public final class RemoteAddAccount: AddAccount {
     private let url: URL
     private let httpClient: HttpClientPost
     
-    public init(url: URL, httpClient: HttpClientPost) {
+    init(url: URL, httpClient: HttpClientPost) {
         self.url = url
         self.httpClient = httpClient
     }

@@ -6,8 +6,8 @@
 //
 
 import XCTest
-import Data
-import Domain
+@testable import Data
+@testable import Domain
 
 final class RemoteAddAccountTests: XCTestCase {
     
