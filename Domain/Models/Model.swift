@@ -6,7 +6,7 @@
 //
 import Foundation
 
-public protocol Model: Codable {
+public protocol Model: Codable, Equatable {
     
 }
 
