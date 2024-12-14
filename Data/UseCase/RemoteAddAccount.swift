@@ -19,13 +19,20 @@ public final class RemoteAddAccount {
     
     public func add(accountModel: AccountModelRequest,
                     completion: @escaping ( Result<AccountModelResponse, DomainError> ) -> Void) {
-        httpClient.post(to: url, with: accountModel.toData()) { result in
+        httpClient.post(to: url, with: accountModel.toData()) { [weak self] result in
+            
+            //Check MemoryLeak
+            guard self != nil else { return }
+            let x = self?.url
+            
             switch result {
             case .success(let data):
                 if let model: AccountModelResponse = data?.toModel() {
                     completion(.success(model))
+                } else {
+                    completion(.failure(.invalidData))
                 }
-            case .failure: 
+            case .failure:
                 completion(.failure(.unExpected))
             }
         }

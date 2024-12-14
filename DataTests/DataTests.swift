@@ -55,23 +55,33 @@ final class RemoteAddAccountTests: XCTestCase {
     func test_add_should_complete_with_success() throws {
         let (sut, httpClientSpy) = makeSUT()
         let accountResponse = makeAccountModelResponse()
-        let expec2 = expectation(description: "waiting async call")
         
-        sut.add(accountModel: makeAccountModelRequest()) { result in
-            switch result {
-            case .success(let receivedAccount):
-                XCTAssertEqual(receivedAccount, accountResponse)
-            case .failure(_ ):
-                XCTFail("Expected error")
-            }
-            
-            //complete async
-            expec2.fulfill()
-        }
-        httpClientSpy.completeWithData(accountResponse.toData()!)
-        wait(for: [expec2], timeout: 1)
+        expect(sut, completeWith: .success(accountResponse), when: {
+            httpClientSpy.completeWithData(accountResponse.toData()!)
+        })
     }
     
+    func test_add_should_complete_with_error_invalid_data() throws {
+        let (sut, httpClientSpy) = makeSUT()
+        expect(sut, completeWith: .failure(.invalidData), when: {
+            httpClientSpy.completeWithData(Data("invalid_json".utf8))
+        })
+    }
+    
+    func test_add_should_not_complete_if_sut_has_been_dealocated() {
+        let httpClientSpy = HttpClientSpy()
+        var sut: RemoteAddAccount? = RemoteAddAccount(url: URL(string: "localhost")!, httpClient: httpClientSpy)
+        var result: Result<AccountModelResponse, DomainError>?
+        
+        sut?.add(accountModel: makeAccountModelRequest()) { 
+            result = $0
+            //Not have do this if sut is null
+        }
+        
+        sut = nil
+        httpClientSpy.completeWithError(.noConectivity)
+        XCTAssertNil(result)
+    }
 }
 
 extension RemoteAddAccountTests {
@@ -79,6 +89,11 @@ extension RemoteAddAccountTests {
         let url = url
         let httpClientSpy = HttpClientSpy()
         let sut = RemoteAddAccount(url: url, httpClient: httpClientSpy)
+        
+        //check if there are memoryLeak
+        addTeardownBlock { [weak sut] in
+            XCTAssertNil(sut)
+        }
         
         return (sut, httpClientSpy)
     }
@@ -98,6 +113,26 @@ extension RemoteAddAccountTests {
             name: "Jose",
             token: "123456")
         return account
+    }
+    
+    func expect(_ sut: RemoteAddAccount, completeWith expectedResult: Result<AccountModelResponse, DomainError>, when action: () -> Void ) {
+        
+        let expec = expectation(description: "waiting async call")
+        sut.add(accountModel: makeAccountModelRequest()) { receivedResult in
+            switch (expectedResult, receivedResult) {
+            case ( .failure(let expectedError), .failure(let receivedError) ):
+                XCTAssertEqual(expectedError, receivedError)
+            case ( .success(let expectedData ), .success(let receivedData ) ):
+                XCTAssertEqual(expectedData, receivedData)
+            default:
+                XCTFail("Error: Expected \(expectedResult) received \(receivedResult) instead.")
+            }
+            
+            //complete async
+            expec.fulfill()
+        }
+        action()
+        wait(for: [expec], timeout: 1)
     }
     
     class HttpClientSpy: HttpClientPost {

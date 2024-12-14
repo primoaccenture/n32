@@ -9,5 +9,6 @@ import Foundation
 
 public enum DomainError: Error {
     case unExpected
+    case invalidData
     
 }
